@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 
+
 var app = builder.Build();
 if (args.Length == 1 && args[0].ToLower() == "seeddata")
     SeedData(app);
