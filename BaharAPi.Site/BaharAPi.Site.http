@@ -1,0 +1,6 @@
+@BaharAPi.Site_HostAddress = http://localhost:5052
+
+GET {{BaharAPi.Site_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

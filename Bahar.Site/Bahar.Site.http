@@ -1,0 +1,6 @@
+@Bahar.Site_HostAddress = http://localhost:5182
+
+GET {{Bahar.Site_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

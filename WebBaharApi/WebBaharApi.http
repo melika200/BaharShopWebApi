@@ -1,0 +1,6 @@
+@WebBaharApi_HostAddress = http://localhost:5288
+
+GET {{WebBaharApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

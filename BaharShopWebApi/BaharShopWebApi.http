@@ -1,0 +1,6 @@
+@BaharShopWebApi_HostAddress = http://localhost:5262
+
+GET {{BaharShopWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
