@@ -13,7 +13,7 @@ namespace Bahar.Domain
         public long Id { get; set; }
         public DateTime Payed { get; set; }
         public long UserId { get; set; }
-        public string Address { get; set; }
+        public string Address { get; set; } 
         public string Mobile { get; set; }
         public Status Status { get; set; }
 

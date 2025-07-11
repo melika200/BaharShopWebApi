@@ -28,6 +28,10 @@ namespace Bahar.Domain
         public Category Category { get; set; }
 
         public bool IsAvailable { get; set; }
+        public int TotalRatings { get; set; } = 0;
+        public double AverageRating { get; set; } = 0.0;
+        public DateTime InsertTime { get; set; } = DateTime.Now;
     }
-
 }
+
+

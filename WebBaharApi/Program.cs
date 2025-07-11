@@ -1,42 +1,105 @@
 ﻿using Bahar.Application.InterfaceContext;
 using Bahar.Application.InterfaceRepository;
+using Bahar.Application.Services;
 using Bahar.Persistence.Context;
 using Bahar.Persistence.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using WebBaharApi.Helper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. افزودن DbContext با اتصال به SQL Server
+
 builder.Services.AddDbContext<BaharDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// 2. ثبت ریپازیتوری‌ها با Scoped lifetime
+
 builder.Services.AddScoped<IDatabaseContext>(provider => provider.GetService<BaharDbContext>());
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<AuthenticationService>();
 
-// ثبت AutoMapper فقط یک بار
-builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ProductService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<CartService>();
 
-// 3. افزودن کنترلرها
+
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+
+
 builder.Services.AddControllers();
 
-// 4. افزودن Swagger (OpenAPI)
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-// 5. ثبت SeedData اگر لازم داری
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebBaharApi", Version = "v1" });
+
+   
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
+                      "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                      "Example: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+   
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+
+            },
+            new List<string>()
+        }
+    });
+});
+
+
 builder.Services.AddTransient<SeedData>();
 
 var app = builder.Build();
 
-// 6. اجرای SeedData اگر آرگومان "seeddata" داده شده باشد (می‌تونی داخل شرط محیط توسعه هم قرار بدی)
+
 if (args.Length == 1 && args[0].ToLower() == "seeddata")
     SeedData(app);
 
@@ -51,7 +114,7 @@ void SeedData(IHost app)
     }
 }
 
-// 7. فعال‌سازی Swagger و ریدایرکت روت فقط در محیط توسعه
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -64,7 +127,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
 app.UseHttpsRedirection();
+
+app.UseAuthentication();  
 app.UseAuthorization();
 
 app.MapControllers();

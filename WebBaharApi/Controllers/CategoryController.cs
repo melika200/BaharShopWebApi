@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Bahar.Application.Dto;
+using Bahar.Application.Dto.Product;
 using Bahar.Application.InterfaceRepository;
 using Bahar.Domain;
 using Microsoft.AspNetCore.Mvc;

@@ -17,7 +17,6 @@ namespace Bahar.Application.InterfaceRepository
         Task Update(Cart cart);
         Task Delete(int id);
         Task Delete(Cart cart);
-        // همه آیتم‌های داخل سبد خرید
         IQueryable<CartItem> GetAllCartItems(Expression<Func<CartItem, bool>> where = null);
         Task AddCartItem(CartItem item);
         Task DeleteCartItem(CartItem item);

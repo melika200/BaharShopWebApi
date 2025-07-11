@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Bahar.Common\Bahar.Common.csproj" />
     <ProjectReference Include="..\Bahar.Domain\Bahar.Domain.csproj" />
   </ItemGroup>
 

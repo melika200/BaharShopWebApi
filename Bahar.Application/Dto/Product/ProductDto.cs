@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Bahar.Domain;
 
-namespace Bahar.Application.Dto
+namespace Bahar.Application.Dto.Product
 {
     public class ProductDto
     {
@@ -24,5 +24,8 @@ namespace Bahar.Application.Dto
         [Range(0, int.MaxValue)]
         public int Stock { get; set; }
         public bool IsAvailable { get; set; }
+        public long CategoryId { get; set; }
+        public double AverageRating { get; set; }
+
     }
 }
