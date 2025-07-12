@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Bahar.Application.Dto;
 using Bahar.Application.Dto.Cart;
+using Bahar.Application.Dto.Category;
 using Bahar.Application.Dto.Product;
 using Bahar.Domain;
 
@@ -20,7 +20,10 @@ namespace WebBaharApi.Helper
 
             CreateMap<CategoryDto, Category>();
             CreateMap<ProductDto, Product>();
+            CreateMap<CategoryCreateDto, Category>();
+            CreateMap<CategoryUpdateDto, Category>();
             CreateMap<ProductCreateDto, Product>();
+            CreateMap<UpdateProductDto, Product>();
             CreateMap<CartItemDto, CartItem>();
         }
     }

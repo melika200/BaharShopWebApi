@@ -46,17 +46,18 @@ namespace Bahar.Application.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-
-
-        public async Task UpdateProduct(long id, ProductDto productDto)
+        public async Task UpdateProduct(long id, UpdateProductDto updatedProductDto)
         {
             var product = await _productRepository.GetById(id);
             if (product == null)
                 throw new Exception("Product not found");
 
-            _mapper.Map(productDto, product);
+
+            _mapper.Map(updatedProductDto, product);
+
             await _productRepository.Update(product);
         }
+
 
         public async Task DeleteProduct(long id)
         {

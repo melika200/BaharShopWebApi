@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Bahar.Application.Dto;
+using Bahar.Application.Dto.Category;
 using Bahar.Application.Dto.Product;
 using Bahar.Application.InterfaceRepository;
 using Bahar.Domain;
@@ -28,6 +28,7 @@ namespace WebBaharApi.Controllers
         public async Task<IActionResult> GetCategories()
         {
             var categoriesFromRepo = await _categoryRepository.GetAll();
+          
             var categories = _mapper.Map<List<CategoryDto>>(categoriesFromRepo);
 
             if (!ModelState.IsValid)
@@ -70,16 +71,16 @@ namespace WebBaharApi.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> CreateCategory([FromBody] CategoryDto categoryCreate)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryCreateDto categoryCreate)
         {
             if (categoryCreate == null)
                 return BadRequest("Category data is null.");
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
+        
             var categories = await _categoryRepository.GetAll(c => c.Name.Trim().ToUpper() == categoryCreate.Name.Trim().ToUpper());
-
+          
             if (categories.Any())
             {
                 ModelState.AddModelError("", "Category already exists");
@@ -89,7 +90,7 @@ namespace WebBaharApi.Controllers
             var categoryMap = _mapper.Map<Category>(categoryCreate);
 
             await _categoryRepository.Add(categoryMap);
-
+           
             return CreatedAtAction(nameof(GetCategory), new { categoryId = categoryMap.Id }, categoryMap);
         }
 
@@ -97,7 +98,7 @@ namespace WebBaharApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryDto updatedCategory)
+        public async Task<IActionResult> UpdateCategory(int categoryId, [FromBody] CategoryUpdateDto updatedCategory)
         {
             if (updatedCategory == null)
                 return BadRequest("Category data is null.");
@@ -108,14 +109,17 @@ namespace WebBaharApi.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-         
-            updatedCategory.Id = categoryId;
+            
+            var categoryFromDb = await _categoryRepository.GetById(categoryId);
+            if (categoryFromDb == null)
+                return NotFound();
 
-            var categoryMap = _mapper.Map<Category>(updatedCategory);
+            _mapper.Map(updatedCategory, categoryFromDb);
+           
 
             try
             {
-                await _categoryRepository.Update(categoryMap);
+                await _categoryRepository.Update(categoryFromDb);
             }
             catch
             {

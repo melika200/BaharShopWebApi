@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bahar.Application.Dto
+namespace Bahar.Application.Dto.Category
 {
-    public class CategoryDto
+    public class CategoryUpdateDto
     {
-        public long Id { get; set; }
         public string Name { get; set; }
     }
 }

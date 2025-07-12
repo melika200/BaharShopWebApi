@@ -44,7 +44,7 @@ namespace Bahar.Application.Services
                 };
                 await _cartRepository.Add(cart);
             }
-
+        
             var cartItem = cart.Items?.FirstOrDefault(i => i.ProductId == productId);
             if (cartItem != null)
             {
@@ -66,9 +66,10 @@ namespace Bahar.Application.Services
 
             return true;
         }
-
+      
         public async Task<List<CartItem>> GetUserCartItems(long userId)
         {
+         
             var items = await _cartRepository.GetAllCartItems(ci => ci.ShoppingCart.UserId == userId && ci.ShoppingCart.Status == Domain.Enum.Status.Created)
                                             .Include(ci => ci.Product)
                                             .Include(ci => ci.ShoppingCart)
@@ -96,9 +97,11 @@ namespace Bahar.Application.Services
             var item = await _cartRepository.GetAllCartItems(ci => ci.CartId == cartItemId)
                                             .Include(ci => ci.Product)
                                             .FirstOrDefaultAsync();
+
+
             if (item == null || item.Product.Stock + item.Quantity < quantity)
                 return false;
-
+          
             int diff = quantity - item.Quantity;
             item.Product.Stock -= diff;
             await _productRepository.Update(item.Product);

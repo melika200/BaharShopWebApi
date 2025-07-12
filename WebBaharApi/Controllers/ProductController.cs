@@ -96,12 +96,12 @@ namespace WebBaharApi.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> UpdateProduct(long productId, [FromBody] ProductDto updatedProductDto)
+        public async Task<IActionResult> UpdateProduct(long productId, [FromBody] UpdateProductDto updatedProductDto)
         {
             if (updatedProductDto == null)
                 return BadRequest("Product data is null.");
 
-            updatedProductDto.Id = productId;
+           
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

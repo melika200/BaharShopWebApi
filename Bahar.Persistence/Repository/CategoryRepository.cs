@@ -54,11 +54,13 @@ namespace Bahar.Persistence.Repository
 
         public async Task<Category> GetById(long id)
         {
+         
             return await _context.Categories.Include(a => a.Products).FirstOrDefaultAsync(a => a.Id == id);
         }
 
         public async Task<List<Product>> GetProductsByCategory(long categoryId)
         {
+          
             return await _context.Categories
                                  .Where(c => c.Id == categoryId)
                                  .SelectMany(c => c.Products)

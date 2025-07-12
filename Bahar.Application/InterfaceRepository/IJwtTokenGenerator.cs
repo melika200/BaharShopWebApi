@@ -9,6 +9,7 @@ namespace Bahar.Application.InterfaceRepository
 {
     public interface IJwtTokenGenerator
     {
+    
         string GenerateToken(User user);
     }
   
